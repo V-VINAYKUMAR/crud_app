@@ -14,10 +14,11 @@ module.exports = async (req, res) => {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  res.json({ 
+  res.setHeader('Content-Type', 'application/json');
+  res.end(JSON.stringify({ 
     status: "OK", 
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'production',
     message: "CRUD API is working!"
-  });
+  }));
 };

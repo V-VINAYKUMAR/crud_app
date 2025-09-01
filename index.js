@@ -1,19 +1,27 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-// Use Vercel-compatible database for production
-const { dbHelpers } = process.env.NODE_ENV === 'production' 
-  ? require("./database-vercel") 
-  : require("./database");
+// Use database helpers
+const { dbHelpers } = require("./database");
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
 // serve frontend from public folder
 app.use(express.static("public"));
 
-// Health check endpoint
+// Health check endpoint for Render
+app.get("/api/health", (req, res) => {
+  res.json({ 
+    status: "OK", 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    message: "CRUD API is working on Render!"
+  });
+});
+
+// Health check endpoint (alternative)
 app.get("/health", (req, res) => {
   res.json({ 
     status: "OK", 
