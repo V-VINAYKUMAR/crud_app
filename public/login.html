@@ -1,293 +1,178 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - CRUD App</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    .login-container {
-      max-width: 400px;
-      margin: 100px auto;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      backdrop-filter: blur(10px);
-      padding: 40px;
-      text-align: center;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CRUD App</title>
+    <style>
+        /* Modern CRUD App Styling */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
 
-    .login-logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      margin-bottom: 30px;
-      font-weight: bold;
-      color: #4a5568;
-    }
+        body {
+          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          min-height: 100vh;
+          padding: 20px;
+          color: #333;
+        }
 
-    .login-logo span {
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+        .container {
+          max-width: 400px;
+          margin: 0 auto;
+          background: rgba(255, 255, 255, 0.95);
+          border-radius: 20px;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+          backdrop-filter: blur(10px);
+          padding: 30px;
+        }
 
-    .login-form {
-      text-align: left;
-    }
+        h1 {
+          text-align: center;
+          color: #4a5568;
+          font-size: 2.5rem;
+          margin-bottom: 30px;
+          text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+          background: linear-gradient(45deg, #667eea, #764ba2);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
 
-    .form-group {
-      margin-bottom: 20px;
-    }
+        .form-group {
+          margin-bottom: 20px;
+        }
 
-    .form-group label {
-      display: block;
-      margin-bottom: 8px;
-      color: #4a5568;
-      font-weight: 500;
-    }
+        .form-group label {
+          display: block;
+          margin-bottom: 8px;
+          color: #2d3748;
+          font-weight: 600;
+        }
 
-    .form-group input {
-      width: 100%;
-      padding: 15px;
-      border: 2px solid #e2e8f0;
-      border-radius: 10px;
-      font-size: 16px;
-      transition: all 0.3s ease;
-      background: #f7fafc;
-    }
+        .form-group input {
+          width: 100%;
+          padding: 12px 16px;
+          border: 2px solid #e2e8f0;
+          border-radius: 10px;
+          font-size: 16px;
+          transition: all 0.3s ease;
+          background: #f7fafc;
+        }
 
-    .form-group input:focus {
-      outline: none;
-      border-color: #667eea;
-      background: white;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    }
+        .form-group input:focus {
+          outline: none;
+          border-color: #667eea;
+          background: white;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          transform: translateY(-2px);
+        }
 
-    .login-btn {
-      width: 100%;
-      background: linear-gradient(45deg, #667eea, #764ba2);
-      color: white;
-      border: none;
-      padding: 15px;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-      margin-top: 10px;
-    }
+        .btn {
+          background: linear-gradient(45deg, #667eea, #764ba2);
+          color: white;
+          border: none;
+          padding: 12px 24px;
+          border-radius: 10px;
+          font-size: 16px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+          width: 100%;
+        }
 
-    .login-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-    }
+        .btn:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
 
-    .login-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+        .btn:active {
+          transform: translateY(0);
+        }
 
-    .error-message {
-      background: #fed7d7;
-      color: #742a2a;
-      padding: 12px;
-      border-radius: 8px;
-      margin: 15px 0;
-      border: 1px solid #feb2b2;
-      display: none;
-    }
+        .signup-link {
+          text-align: center;
+          margin-top: 20px;
+        }
 
-    .demo-credentials {
-      background: #e6fffa;
-      color: #234e52;
-      padding: 15px;
-      border-radius: 10px;
-      margin: 20px 0;
-      border: 1px solid #b2f5ea;
-      font-size: 14px;
-    }
+        .signup-link a {
+          color: #667eea;
+          text-decoration: none;
+          font-weight: 600;
+        }
 
-    .demo-credentials h4 {
-      margin: 0 0 10px 0;
-      color: #234e52;
-    }
+        .signup-link a:hover {
+          text-decoration: underline;
+        }
 
-    .demo-credentials p {
-      margin: 5px 0;
-    }
+        .logo {
+          text-align: center;
+          margin-bottom: 20px;
+        }
 
-    .forgot-password {
-      text-align: center;
-      margin-top: 20px;
-    }
-
-    .forgot-password a {
-      color: #667eea;
-      text-decoration: none;
-      font-size: 14px;
-    }
-
-    .forgot-password a:hover {
-      text-decoration: underline;
-    }
-
-    .login-link {
-      text-align: center;
-      margin-top: 20px;
-      color: #4a5568;
-    }
-
-    .login-link a {
-      color: #667eea;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .login-link a:hover {
-      text-decoration: underline;
-    }
-  </style>
+        .logo svg {
+          width: 60px;
+          height: 60px;
+        }
+    </style>
 </head>
 <body>
-  <div class="login-container">
-    <div class="login-logo">
-      <img src="logo.svg" alt="CRUD App Logo" class="app-logo-large">
-      <span>CRUD App</span>
-    </div>
-    
-    <form class="login-form" id="loginForm">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" name="username" required placeholder="Enter username">
-      </div>
-      
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" required placeholder="Enter password">
-      </div>
-      
-      <button type="submit" class="login-btn" id="loginBtn">
-        <span id="loginText">Login</span>
-        <span id="loadingText" style="display: none;">Logging in...</span>
-      </button>
-    </form>
-
-    <div class="error-message" id="errorMessage"></div>
-
-    <div class="demo-credentials">
-      <h4>Demo Credentials</h4>
-      <p><strong>Username:</strong> admin</p>
-      <p><strong>Password:</strong> password123</p>
+    <div class="container">
+        <div class="logo">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2z"/>
+            </svg>
+        </div>
+        <h1>Login</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="btn">Login</button>
+        </form>
+        <div class="signup-link">
+            <p>Don't have an account? <a href="signup.html">Sign up</a></p>
+        </div>
     </div>
 
-    <div class="forgot-password">
-      <a href="#" onclick="alert('Contact administrator to reset password')">Forgot Password?</a>
-    </div>
-
-    <div class="login-link">
-      Don't have an account? <a href="signup.html">Sign up here</a>
-    </div>
-  </div>
-
-  <script>
-    // Get users from localStorage (includes demo users and new signups)
-    function getValidUsers() {
-      let users = JSON.parse(localStorage.getItem('users') || '[]');
-      
-      // Add demo users if they don't exist
-      const demoUsers = [
-        { username: 'admin', password: 'password123', role: 'admin', fullName: 'Administrator', email: 'admin@example.com' },
-        { username: 'user', password: 'user123', role: 'user', fullName: 'Regular User', email: 'user@example.com' },
-        { username: 'demo', password: 'demo123', role: 'user', fullName: 'Demo User', email: 'demo@example.com' }
-      ];
-
-      // Add demo users if they don't exist
-      demoUsers.forEach(demoUser => {
-        if (!users.find(u => u.username === demoUser.username)) {
-          users.push(demoUser);
-        }
-      });
-
-      // Save updated users list
-      localStorage.setItem('users', JSON.stringify(users));
-      return users;
-    }
-
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const username = document.getElementById('username').value.trim();
-      const password = document.getElementById('password').value.trim();
-      
-      // Show loading state
-      document.getElementById('loginText').style.display = 'none';
-      document.getElementById('loadingText').style.display = 'inline';
-      document.getElementById('loginBtn').disabled = true;
-      
-      // Call the Vercel API
-      try {
-        const response = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ username, password })
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = 'index.html';
+                } else {
+                    const error = await response.json();
+                    alert('Login failed: ' + error.error);
+                }
+            } catch (error) {
+                alert('Login failed: ' + error.message);
+            }
         });
-
-        if (response.ok) {
-          const data = await response.json();
-          
-          // Store user info in localStorage
-          localStorage.setItem('currentUser', JSON.stringify({
-            username: data.user.username,
-            role: data.user.role,
-            fullName: data.user.fullName,
-            loginTime: new Date().toISOString()
-          }));
-          
-          // Redirect to main app
-          window.location.href = 'index.html';
-        } else {
-          const error = await response.json();
-          showError(error.error || 'Login failed');
-          resetLoginButton();
-        }
-      } catch (error) {
-        showError('Network error. Please try again.');
-        resetLoginButton();
-      }
-    });
-
-    function showError(message) {
-      const errorDiv = document.getElementById('errorMessage');
-      errorDiv.textContent = message;
-      errorDiv.style.display = 'block';
-      
-      // Hide error after 5 seconds
-      setTimeout(() => {
-        errorDiv.style.display = 'none';
-      }, 5000);
-    }
-
-    function resetLoginButton() {
-      document.getElementById('loginText').style.display = 'inline';
-      document.getElementById('loadingText').style.display = 'none';
-      document.getElementById('loginBtn').disabled = false;
-    }
-
-    // Check if user is already logged in
-    window.addEventListener('load', function() {
-      const currentUser = localStorage.getItem('currentUser');
-      if (currentUser) {
-        // User is already logged in, redirect to main app
-        window.location.href = 'index.html';
-      }
-    });
-  </script>
+    </script>
 </body>
 </html>
