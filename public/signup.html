@@ -18,13 +18,20 @@
     }
 
     .signup-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 2.5rem;
       margin-bottom: 30px;
+      font-weight: bold;
+      color: #4a5568;
+    }
+
+    .signup-logo span {
       background: linear-gradient(45deg, #667eea, #764ba2);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      font-weight: bold;
     }
 
     .signup-form {
@@ -190,7 +197,10 @@
 </head>
 <body>
   <div class="signup-container">
-    <div class="signup-logo">📝 Sign Up</div>
+    <div class="signup-logo">
+      <img src="logo.svg" alt="CRUD App Logo" class="app-logo-large">
+      <span>Sign Up</span>
+    </div>
     
     <form class="signup-form" id="signupForm">
       <div class="form-group">

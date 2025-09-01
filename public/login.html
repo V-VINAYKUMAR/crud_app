@@ -18,13 +18,20 @@
     }
 
     .login-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-size: 2.5rem;
       margin-bottom: 30px;
+      font-weight: bold;
+      color: #4a5568;
+    }
+
+    .login-logo span {
       background: linear-gradient(45deg, #667eea, #764ba2);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      font-weight: bold;
     }
 
     .login-form {
@@ -148,7 +155,10 @@
 </head>
 <body>
   <div class="login-container">
-    <div class="login-logo">🔐 CRUD App</div>
+    <div class="login-logo">
+      <img src="logo.svg" alt="CRUD App Logo" class="app-logo-large">
+      <span>CRUD App</span>
+    </div>
     
     <form class="login-form" id="loginForm">
       <div class="form-group">

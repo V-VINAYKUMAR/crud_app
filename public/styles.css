@@ -292,6 +292,27 @@ hr {
   border: 1px solid #b2f5ea;
 }
 
+/* Logo Styling */
+.app-logo {
+  width: 40px;
+  height: 40px;
+  margin-right: 15px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.app-logo-large {
+  width: 60px;
+  height: 60px;
+  margin-right: 15px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+}
+
+.logo-title {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
 /* Header Section Styling */
 .header-section {
   display: flex;
@@ -304,7 +325,6 @@ hr {
 
 .header-section h1 {
   margin: 0;
-  flex: 1;
 }
 
 .user-info {

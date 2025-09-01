@@ -8,17 +8,25 @@
     "build": "echo 'Build completed'",
     "dev": "nodemon index.js"
   },
-  "keywords": ["crud", "express", "sqlite", "authentication"],
+  "keywords": [
+    "crud",
+    "express",
+    "sqlite",
+    "authentication"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0",
-    "sqlite3": "^5.1.6",
     "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.2"
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "sqlite3": "^5.1.6"
   },
   "description": "A professional CRUD application with authentication and database",
   "engines": {
     "node": ">=16.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
   }
 }
