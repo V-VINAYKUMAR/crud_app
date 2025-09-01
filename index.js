@@ -8,10 +8,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 
-// serve frontend from public folder
-app.use(express.static("public"));
-
-// Health check endpoint for Render
+// Health check endpoint for Render (must come BEFORE static files)
 app.get("/api/health", (req, res) => {
   res.json({ 
     status: "OK", 
@@ -29,6 +26,9 @@ app.get("/health", (req, res) => {
     environment: process.env.NODE_ENV || 'development'
   });
 });
+
+// serve frontend from public folder (must come AFTER API routes)
+app.use(express.static("public"));
 
 // Redirect root to login page
 app.get("/", (req, res) => {
