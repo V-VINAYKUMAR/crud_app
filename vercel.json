@@ -6,6 +6,19 @@
       "dest": "/api/$1"
     },
     {
+
+        "src": "/styles.css",
+      "dest": "/styles.css"
+    },
+    {
+      "src": "/logo.svg",
+      "dest": "/logo.svg"
+    },
+    {
+      "src": "/(.*\\.html)",
+      "dest": "/$1"
+    },
+    {
       "src": "/(.*)",
       "dest": "/public/$1"
     }
