@@ -1,11 +1,7 @@
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
 
-// JWT Secret
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key-change-in-production";
-
-// Demo users (in production, use a real database)
-const demoUsers = [
+// Demo users storage (in production, use a real database)
+let demoUsers = [
   {
     username: 'admin',
     password: bcrypt.hashSync('password123', 10),
@@ -47,46 +43,44 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { username, password } = req.body;
+    const { username, password, fullName, email } = req.body;
     
-    if (!username || !password) {
+    if (!username || !password || !fullName || !email) {
       res.setHeader('Content-Type', 'application/json');
-      return res.end(JSON.stringify({ error: "Username and password required" }));
+      return res.end(JSON.stringify({ error: "All fields are required" }));
     }
     
-    // Find user
-    const user = demoUsers.find(u => u.username === username);
-    if (!user) {
+    // Check if user already exists
+    const existingUser = demoUsers.find(u => u.username === username);
+    if (existingUser) {
       res.setHeader('Content-Type', 'application/json');
-      return res.end(JSON.stringify({ error: "Invalid credentials" }));
+      return res.end(JSON.stringify({ error: "Username already exists" }));
     }
 
-    // Check password
-    const validPassword = bcrypt.compareSync(password, user.password);
-    if (!validPassword) {
-      res.setHeader('Content-Type', 'application/json');
-      return res.end(JSON.stringify({ error: "Invalid credentials" }));
-    }
-
-    // Create JWT token
-    const token = jwt.sign(
-      { username: user.username, role: user.role },
-      JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
+    // Create new user
+    const hashedPassword = bcrypt.hashSync(password, 10);
+    const newUser = {
+      username,
+      password: hashedPassword,
+      fullName,
+      email,
+      role: 'user'
+    };
+    
+    demoUsers.push(newUser);
+    
     res.setHeader('Content-Type', 'application/json');
-    res.end(JSON.stringify({
-      token,
+    res.end(JSON.stringify({ 
+      message: "User created successfully", 
       user: {
-        username: user.username,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role
+        username: newUser.username,
+        fullName: newUser.fullName,
+        email: newUser.email,
+        role: newUser.role
       }
     }));
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('Signup error:', error);
     res.setHeader('Content-Type', 'application/json');
     res.end(JSON.stringify({ error: "Server error" }));
   }

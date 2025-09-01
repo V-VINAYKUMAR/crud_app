@@ -11,7 +11,8 @@ module.exports = async (req, res) => {
 
   // Only allow GET method
   if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    res.setHeader('Content-Type', 'application/json');
+    return res.end(JSON.stringify({ error: 'Method not allowed' }));
   }
 
   res.setHeader('Content-Type', 'application/json');

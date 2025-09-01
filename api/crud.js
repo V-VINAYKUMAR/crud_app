@@ -44,12 +44,14 @@ module.exports = async (req, res) => {
     switch (req.method) {
       case 'GET':
         // Get all CRUD data
-        return res.json(crudData);
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify(crudData));
 
       case 'POST':
         // Create new data
         if (!req.body.name) {
-          return res.status(400).json({ error: "Name is required" });
+          res.setHeader('Content-Type', 'application/json');
+          return res.end(JSON.stringify({ error: "Name is required" }));
         }
         
         const newItem = {
@@ -60,43 +62,52 @@ module.exports = async (req, res) => {
         };
         
         crudData.push(newItem);
-        return res.status(201).json(newItem);
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify(newItem));
 
       case 'PUT':
         // Update data
         const { id } = req.query;
         if (!id || !req.body.name) {
-          return res.status(400).json({ error: "ID and name are required" });
+          res.setHeader('Content-Type', 'application/json');
+          return res.end(JSON.stringify({ error: "ID and name are required" }));
         }
         
         const itemIndex = crudData.findIndex(item => item.id === parseInt(id));
         if (itemIndex === -1) {
-          return res.status(404).json({ error: "Item not found" });
+          res.setHeader('Content-Type', 'application/json');
+          return res.end(JSON.stringify({ error: "Item not found" }));
         }
         
         crudData[itemIndex].name = req.body.name;
-        return res.json(crudData[itemIndex]);
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify(crudData[itemIndex]));
 
       case 'DELETE':
         // Delete data
         const deleteId = req.query.id;
         if (!deleteId) {
-          return res.status(400).json({ error: "ID is required" });
+          res.setHeader('Content-Type', 'application/json');
+          return res.end(JSON.stringify({ error: "ID is required" }));
         }
         
         const deleteIndex = crudData.findIndex(item => item.id === parseInt(deleteId));
         if (deleteIndex === -1) {
-          return res.status(404).json({ error: "Item not found" });
+          res.setHeader('Content-Type', 'application/json');
+          return res.end(JSON.stringify({ error: "Item not found" }));
         }
         
         const deletedItem = crudData.splice(deleteIndex, 1)[0];
-        return res.json({ message: "Item deleted successfully", item: deletedItem });
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify({ message: "Item deleted successfully", item: deletedItem }));
 
       default:
-        return res.status(405).json({ error: 'Method not allowed' });
+        res.setHeader('Content-Type', 'application/json');
+        return res.end(JSON.stringify({ error: 'Method not allowed' }));
     }
   } catch (error) {
     console.error('CRUD API error:', error);
-    res.status(500).json({ error: "Server error" });
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify({ error: "Server error" }));
   }
 };
