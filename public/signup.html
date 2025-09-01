@@ -366,7 +366,7 @@
     });
 
     // Form submission
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const fullName = document.getElementById('fullName').value.trim();
@@ -408,30 +408,33 @@
       document.getElementById('loadingText').style.display = 'inline';
       document.getElementById('signupBtn').disabled = true;
 
-      // Simulate API call delay
-      setTimeout(() => {
-        // Create new user
-        const newUser = {
-          username: username,
-          password: password,
-          fullName: fullName,
-          email: email,
-          role: 'user',
-          createdAt: new Date().toISOString()
-        };
+      // Call the Vercel API
+      try {
+        const response = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password, fullName, email })
+        });
 
-        // Add to existing users
-        existingUsers.push(newUser);
-        localStorage.setItem('users', JSON.stringify(existingUsers));
+        if (response.ok) {
+          // Show success message
+          showSuccess('Account created successfully! Redirecting to login...');
 
-        // Show success message
-        showSuccess('Account created successfully! Redirecting to login...');
-
-        // Redirect to login after 2 seconds
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 2000);
-      }, 1500);
+          // Redirect to login after 2 seconds
+          setTimeout(() => {
+            window.location.href = 'login.html';
+          }, 2000);
+        } else {
+          const error = await response.json();
+          showError(error.error || 'Error creating account');
+          resetSignupButton();
+        }
+      } catch (error) {
+        showError('Network error. Please try again.');
+        resetSignupButton();
+      }
     });
 
     function showError(message) {

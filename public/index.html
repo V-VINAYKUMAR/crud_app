@@ -96,7 +96,7 @@
     // Check authentication when page loads
     window.addEventListener('load', checkAuth);
 
-    const API_URL = "/users";  // no need for localhost:3000 now!
+    const API_URL = "/api/users";  // Updated for Vercel API routes
 
     async function getUsers() {
       const res = await fetch(API_URL);

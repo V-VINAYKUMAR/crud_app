@@ -218,7 +218,7 @@
       return users;
     }
 
-    document.getElementById('loginForm').addEventListener('submit', function(e) {
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       
       const username = document.getElementById('username').value.trim();
@@ -229,28 +229,38 @@
       document.getElementById('loadingText').style.display = 'inline';
       document.getElementById('loginBtn').disabled = true;
       
-      // Simulate API call delay
-      setTimeout(() => {
-        const validUsers = getValidUsers();
-        const user = validUsers.find(u => 
-          u.username === username && u.password === password
-        );
-        
-        if (user) {
+      // Call the Vercel API
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          
           // Store user info in localStorage
           localStorage.setItem('currentUser', JSON.stringify({
-            username: user.username,
-            role: user.role,
+            username: data.user.username,
+            role: data.user.role,
+            fullName: data.user.fullName,
             loginTime: new Date().toISOString()
           }));
           
           // Redirect to main app
           window.location.href = 'index.html';
         } else {
-          showError('Invalid username or password. Please try again.');
+          const error = await response.json();
+          showError(error.error || 'Login failed');
           resetLoginButton();
         }
-      }, 1000);
+      } catch (error) {
+        showError('Network error. Please try again.');
+        resetLoginButton();
+      }
     });
 
     function showError(message) {
