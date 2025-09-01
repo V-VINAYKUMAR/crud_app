@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header-section">
+      <h1>CRUD Operations Demo</h1>
+      <div class="user-info">
+        <span id="welcomeMessage">Welcome!</span>
+        <button class="btn btn-secondary" onclick="logout()">Logout</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <button class="btn get-users-btn" onclick="getUsers()">Get Users</button>
+      
+      <!-- Search and Filter Section -->
+      <div class="filter-section">
+        <h4>Search & Filter</h4>
+        <div class="input-group">
+          <input id="searchName" placeholder="Search by name..." onkeyup="filterUsers()">
+          <input id="minId" placeholder="Min ID" type="number" onchange="filterUsers()">
+          <input id="maxId" placeholder="Max ID" type="number" onchange="filterUsers()">
+        </div>
+        <div class="filter-controls">
+          <select id="sortBy" onchange="filterUsers()">
+            <option value="id">Sort by ID</option>
+            <option value="name">Sort by Name</option>
+            <option value="id-desc">Sort by ID (Descending)</option>
+            <option value="name-desc">Sort by Name (Descending)</option>
+          </select>
+          <button class="btn btn-secondary" onclick="clearFilters()">Clear Filters</button>
+        </div>
+      </div>
+      
+      <div id="users" class="users-display"></div>
+      <div id="filterInfo" class="filter-info"></div>
+    </div>
+
+    <div class="section">
+      <h3>Add User</h3>
+      <div class="input-group">
+        <input id="newId" placeholder="Enter ID" type="text" pattern="[0-9]*">
+        <input id="newName" placeholder="Enter name">
+        <button class="btn btn-success" onclick="addUser()">Add User</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Update User</h3>
+      <div class="input-group">
+        <input id="updateId" placeholder="User ID">
+        <input id="updateName" placeholder="New Name">
+        <button class="btn" onclick="updateUser()">Update User</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Delete User</h3>
+      <div class="input-group">
+        <input id="deleteId" placeholder="User ID">
+        <button class="btn btn-danger" onclick="deleteUser()">Delete User</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Authentication check
+    function checkAuth() {
+      const currentUser = localStorage.getItem('currentUser');
+      if (!currentUser) {
+        // Not logged in, redirect to login page
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // User is logged in, show welcome message
+      const user = JSON.parse(currentUser);
+      const displayName = user.fullName || user.username;
+      document.getElementById('welcomeMessage').textContent = `Welcome, ${displayName}!`;
+    }
+
+    // Logout function
+    function logout() {
+      localStorage.removeItem('currentUser');
+      window.location.href = 'login.html';
+    }
+
+    // Check authentication when page loads
+    window.addEventListener('load', checkAuth);
+
+    const API_URL = "/users";  // no need for localhost:3000 now!
+
+    async function getUsers() {
+      const res = await fetch(API_URL);
+      const data = await res.json();
+      document.getElementById("users").innerHTML =
+        data.map(user => `<div>ID: ${user.id}, Name: ${user.name}</div>`).join("");
+    }
+
+    async function addUser() {
+      const idInput = document.getElementById("newId");
+      const nameInput = document.getElementById("newName");
+      
+      const id = idInput.value.trim();
+      const name = nameInput.value.trim();
+      
+      console.log("ID input value:", id, "Type:", typeof id);
+      console.log("Name input value:", name, "Type:", typeof name);
+      
+      if (!id || !name) {
+        alert("Please enter both ID and name");
+        return;
+      }
+      
+      const numericId = parseInt(id);
+      if (isNaN(numericId) || numericId <= 0) {
+        alert("Please enter a valid positive number for ID");
+        return;
+      }
+      
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify({id: numericId, name})
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          alert(error.error || "Error adding user");
+          return;
+        }
+        
+        getUsers();
+        // Clear inputs after successful addition
+        idInput.value = "";
+        nameInput.value = "";
+      } catch (error) {
+        console.error("Error:", error);
+        alert("Error adding user");
+      }
+    }
+
+    async function updateUser() {
+      const id = document.getElementById("updateId").value;
+      const name = document.getElementById("updateName").value;
+      await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({name})
+      });
+      getUsers();
+    }
+
+    async function deleteUser() {
+      const id = document.getElementById("deleteId").value;
+      await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      getUsers();
+    }
+
+    // Global variable to store all users
+    let allUsers = [];
+
+    // Enhanced getUsers function
+    async function getUsers() {
+      const res = await fetch(API_URL);
+      allUsers = await res.json();
+      displayUsers(allUsers);
+    }
+
+    // Display users with filtering
+    function displayUsers(usersToShow) {
+      document.getElementById("users").innerHTML =
+        usersToShow.map(user => `<div>ID: ${user.id}, Name: ${user.name}</div>`).join("");
+      
+      // Show filter info
+      const totalUsers = allUsers.length;
+      const filteredUsers = usersToShow.length;
+      document.getElementById("filterInfo").innerHTML = 
+        `<div class="filter-stats">Showing ${filteredUsers} of ${totalUsers} users</div>`;
+    }
+
+    // Filter and sort users
+    function filterUsers() {
+      const searchTerm = document.getElementById("searchName").value.toLowerCase();
+      const minId = document.getElementById("minId").value;
+      const maxId = document.getElementById("maxId").value;
+      const sortBy = document.getElementById("sortBy").value;
+
+      let filtered = allUsers.filter(user => {
+        // Name filter
+        const nameMatch = user.name.toLowerCase().includes(searchTerm);
+        
+        // ID range filter
+        const idMatch = (!minId || user.id >= parseInt(minId)) && 
+                       (!maxId || user.id <= parseInt(maxId));
+        
+        return nameMatch && idMatch;
+      });
+
+      // Sort users
+      filtered.sort((a, b) => {
+        switch(sortBy) {
+          case 'id':
+            return a.id - b.id;
+          case 'id-desc':
+            return b.id - a.id;
+          case 'name':
+            return a.name.localeCompare(b.name);
+          case 'name-desc':
+            return b.name.localeCompare(a.name);
+          default:
+            return 0;
+        }
+      });
+
+      displayUsers(filtered);
+    }
+
+    // Clear all filters
+    function clearFilters() {
+      document.getElementById("searchName").value = "";
+      document.getElementById("minId").value = "";
+      document.getElementById("maxId").value = "";
+      document.getElementById("sortBy").value = "id";
+      displayUsers(allUsers);
+    }
+  </script>
+</body>
+</html>
